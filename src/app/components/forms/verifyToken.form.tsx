@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import FormButton from "../ui/form-button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,13 +9,18 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { maskEmail } from "~/lib/utils";
 
+const UserEmail = () => {
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+  const maskedEmail = maskEmail(email!);
+
+  return <span className="font-bold">{maskedEmail}</span>;
+};
+
 const VerifyTokenForm = () => {
   const router = useRouter();
   const [digits, setDigits] = useState(Array(8).fill(""));
   const [submitting, setSubmitting] = useState(false);
-  const searchParams = useSearchParams();
-  const email = searchParams.get("email");
-  const maskedEmail = maskEmail(email!)
 
   const methods = useForm<EmailCodeInput>({
     resolver: zodResolver(EmailCodeSchema),
@@ -72,7 +77,9 @@ const VerifyTokenForm = () => {
       <h1 className="text-2xl font-semibold">Verify your email</h1>
       <p className="text-center">
         Enter the 8 digit code you have received on <br />{" "}
-        <span className="font-bold">{maskedEmail}</span>
+        <Suspense>
+          <UserEmail/>
+        </Suspense>
       </p>
       <div className="flex w-full flex-col items-start gap-4">
         <p>code</p>
