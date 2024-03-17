@@ -48,7 +48,7 @@ export const getPaginatedCategories = async ({ ctx, input }: GetCategoriesProps)
     });
     
 
-    const userId = ctx.user?.id
+    const userId = ctx.user.user?.id
      
     const userCategories = await db.userCategory.findMany({where: {userId: userId}})
     let userCategoryMap: UserCategoryType = {}
@@ -101,7 +101,7 @@ export const updateUserCategoryHandler = async ({
 
     const existingCategories = await db.userCategory.findMany({
       where: { 
-        userId: ctx.user?.id,
+        userId: ctx.user.user?.id,
         categoryId: { in: [...categoriesToAdd, ...categoriesToDelete] }
       },
     });
@@ -115,14 +115,14 @@ export const updateUserCategoryHandler = async ({
 
     const addOrUpdateResults = await Promise.all(categoriesToUpsert.map((categoryId: string) =>
       db.userCategory.upsert({
-        where: { userId_categoryId: { userId: ctx.user?.id!, categoryId } },
+        where: { userId_categoryId: { userId: ctx.user.user?.id!, categoryId } },
         update: {},
-        create: { userId: ctx.user?.id!, categoryId },
+        create: { userId: ctx.user.user?.id!, categoryId },
       })
     ));
     const deleteResults = await Promise.all(categoriesToActuallyDelete.map(cat =>
       db.userCategory.delete({
-        where: { userId_categoryId: { userId: ctx.user?.id!, categoryId: cat.categoryId } }
+        where: { userId_categoryId: { userId: ctx.user.user?.id!, categoryId: cat.categoryId } }
       })
     ));
 
