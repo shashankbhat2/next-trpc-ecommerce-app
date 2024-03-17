@@ -1,27 +1,29 @@
-'use client';
+"use client";
 
-import { QueryClientProvider } from '@tanstack/react-query';
-import { httpBatchLink, getFetch, loggerLink } from '@trpc/client';
-import { useState } from 'react';
-import superjson from 'superjson';
-import { trpc } from './trpc';
-import queryClient from './query-client';
-import { env } from '~/env';
+import { QueryClientProvider } from "@tanstack/react-query";
+import { httpBatchLink, getFetch, loggerLink } from "@trpc/client";
+import { useState } from "react";
+import superjson from "superjson";
+import { trpc } from "./trpc";
+import queryClient from "./query-client";
+import { env } from "~/env";
 
 function getBaseUrl() {
   if (typeof window !== "undefined") return window.location.origin;
-  if (env.NEXT_PUBLIC_VERCEL_URL) return `https://${env.NEXT_PUBLIC_VERCEL_URL}`;
+  if (env.NEXT_PUBLIC_VERCEL_URL)
+    return `https://${env.NEXT_PUBLIC_VERCEL_URL}`;
   return `http://localhost:${process.env.PORT ?? 3000}`;
 }
 export const TrpcProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-
   const [trpcClient] = useState(() =>
     trpc.createClient({
       links: [
         loggerLink({
-          enabled: () => true,
+          enabled: (op) =>
+            process.env.NODE_ENV === "development" ||
+            (op.direction === "down" && op.result instanceof Error),
         }),
         httpBatchLink({
           url: getBaseUrl() + "/api/trpc",
@@ -35,18 +37,16 @@ export const TrpcProvider: React.FC<{ children: React.ReactNode }> = ({
             const fetch = getFetch();
             return fetch(input, {
               ...init,
-              credentials: 'include',
+              credentials: "include",
             });
           },
         }),
       ],
-    })
+    }),
   );
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </trpc.Provider>
   );
 };
