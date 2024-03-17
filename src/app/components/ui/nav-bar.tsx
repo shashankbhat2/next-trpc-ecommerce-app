@@ -17,7 +17,7 @@ const Navbar = async () => {
             <Link href="/login">Login</Link>
           </>
         )}
-        {user && <AuthNav username={user.data.user?.name!} />}{" "}
+        {user && <AuthNav username={user.name} />}{" "}
       </div>
       <nav className="flex items-center justify-between p-4">
         <Link href="/" className="text-xl font-bold">

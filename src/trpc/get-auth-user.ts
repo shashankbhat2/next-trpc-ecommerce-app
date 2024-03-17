@@ -10,7 +10,7 @@ export const getAuthUser = async ({
   const caller = await createAsyncCaller();
   return caller
     .getMe(undefined)
-    .then((result) => result)
+    .then((result) => result.data.user)
     .catch((e) => {
       if (e.code === "UNAUTHORIZED" && shouldRedirect) {
         redirect("/login");

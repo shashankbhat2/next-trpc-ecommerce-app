@@ -7,7 +7,7 @@ type GetAuthUserControllerProps = {
 
 export const getAuthUserHandler = ({ ctx }: GetAuthUserControllerProps) => {
   try {
-    const user = ctx.user;
+    const user = ctx.user.user;
     return {
       status: "success",
       data: {
