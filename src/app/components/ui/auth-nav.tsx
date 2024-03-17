@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Fragment } from "react";
 import { trpc } from "~/trpc/trpc";
 import { toast } from "sonner";
 import queryClient from "~/trpc/query-client";
@@ -22,12 +22,11 @@ export default function AuthMenu({username}: {username: string}) {
   });
 
   return (
-    <>
-      {" "}
+    <Fragment>
       <p>Hi, {username}</p>
       <button className="cursor-pointer" onClick={() => logoutFn()}>
         Logout
       </button>
-    </>
+    </Fragment>
   );
 }
