@@ -9,14 +9,6 @@ const setCorsHeaders = (res: Response) => {
   res.headers.set("Access-Control-Allow-Headers", "*");
 };
 
-// export const OPTIONS = () => {
-//   const response = new Response(null, {
-//     status: 204,
-//   });
-//   setCorsHeaders(response);
-//   return response;
-// };
-
 const handler = async (req: Request) => {
   const response = await fetchRequestHandler({
     endpoint: "/api/trpc",

@@ -28,7 +28,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_VERCEL_URL: z.string()
   },
 
   /**
@@ -41,6 +41,7 @@ export const env = createEnv({
     JWT_SECRET: process.env.JWT_SECRET,
     MAILTRAP_USER: process.env.MAILTRAP_USER,
     MAILTRAP_PASS: process.env.MAILTRAP_PASS,
+    NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
