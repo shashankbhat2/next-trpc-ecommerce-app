@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
     return;
   }
 
-  if (!currentUser && request.nextUrl.pathname !== "/onboard") {
+  if (!currentUser && request.nextUrl.pathname === "/onboard") {
     return Response.redirect(new URL("/login", request.url));
   }
 
