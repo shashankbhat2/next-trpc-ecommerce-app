@@ -10,13 +10,19 @@ import Pagination from "../ui/pagination";
 
 const CategorySelectionForm = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [fetchCategoryStats, setFetchCategoryStats] = useState(false);
   const [categoryChanges, setCategoryChanges] = useState<UserCategoryType>({});
   const { data, isLoading } = trpc.getCategories.useQuery({
     page: currentPage,
     pageSize: 6,
   });
   const { data: categoryStats, isLoading: isStatsLoading } =
-    trpc.getCategoriesCount.useQuery();
+    trpc.getCategoriesCount.useQuery(undefined, {
+      enabled: fetchCategoryStats,
+    });
+
+
+  
   const totalPages = categoryStats ? categoryStats.totalPages : 0;
   const visiblePageNumbers = totalPages
     ? getPageRange(totalPages, currentPage)
@@ -39,6 +45,10 @@ const CategorySelectionForm = () => {
     }, 1500),
     [],
   );
+
+  useEffect(() => {
+    setFetchCategoryStats(true);
+  }, []);
 
   useEffect(() => {
     if (Object.keys(categoryChanges).length > 0) {
