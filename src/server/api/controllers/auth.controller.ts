@@ -1,4 +1,4 @@
-import { LoginUserInput, RegisterUserInput } from "~/lib/schema";
+import { EmailCodeInputType, LoginUserInputType, RegisterUserInputType } from "~/lib/schema";
 import bcrypt from "bcryptjs";
 import { TRPCError } from "@trpc/server";
 import { env } from "~/env";
@@ -8,17 +8,15 @@ import { sendEmail } from "~/lib/mailer";
 import { db } from "~/server/db";
 
 type RegisterUserInputProps = {
-  input: RegisterUserInput;
+  input: RegisterUserInputType;
 };
 
 type LoginUserInputProps = {
-  input: LoginUserInput;
+  input: LoginUserInputType;
 };
 
 type VerifyTokenProps = {
-  input: {
-    code: string;
-  };
+  input: EmailCodeInputType
 };
 
 export const registerUserHandler = async ({
