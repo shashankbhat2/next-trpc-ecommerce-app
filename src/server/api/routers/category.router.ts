@@ -1,24 +1,18 @@
-import { protectedProcedure, publicProcedure, t } from "~/trpc/trpc-server";
+import { protectedProcedure, t } from "~/trpc/trpc-server";
 import {
-  createCategory,
   getCategoryStats,
+  getUserCategories as getUserCategoriesHandler,
   getPaginatedCategories,
   updateUserCategoryHandler,
 } from "../controllers/category.controller";
-import {
-  CreateCategoryInputSchema,
-  PaginationInputSchema,
-  UpdateUserCategorySchema,
-} from "~/lib/schema";
+import { PaginationInputSchema, UpdateUserCategorySchema } from "~/lib/schema";
 
 const CategoryRouter = t.router({
-  createCategory: publicProcedure
-    .input(CreateCategoryInputSchema)
-    .mutation(createCategory),
   getCategories: protectedProcedure
     .input(PaginationInputSchema)
     .query(getPaginatedCategories),
   getCategoriesCount: protectedProcedure.query(getCategoryStats),
+  getUserCategories: protectedProcedure.query(getUserCategoriesHandler),
   updateUserCategories: protectedProcedure
     .input(UpdateUserCategorySchema)
     .mutation(updateUserCategoryHandler),

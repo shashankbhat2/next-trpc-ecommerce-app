@@ -1,6 +1,5 @@
 import { TRPCError } from "@trpc/server";
 import {
-  CategoryInputType,
   PaginatedCategoryInputType,
   UpdateUserCategoryInputType,
   UserCategoryType,
@@ -8,13 +7,13 @@ import {
 import { db } from "~/server/db";
 import { Context } from "~/trpc/trpc-context";
 
-type CreateCategoryProps = {
-  input: CategoryInputType;
-};
-
 type GetCategoriesProps = {
   ctx: Context;
   input: PaginatedCategoryInputType;
+};
+
+type GetUserCategoriesProps = {
+  ctx: Context;
 };
 
 type UpdateUserCategoryProps = {
@@ -22,22 +21,10 @@ type UpdateUserCategoryProps = {
   input: UpdateUserCategoryInputType;
 };
 
-export const createCategory = async ({ input }: CreateCategoryProps) => {
-  try {
-    return db.category.create({
-      data: {
-        name: input.name,
-      },
-    });
-  } catch (err: any) {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: err,
-    });
-  }
-};
-
-export const getPaginatedCategories = async ({ ctx, input }: GetCategoriesProps) => {
+export const getPaginatedCategories = async ({
+  ctx,
+  input,
+}: GetCategoriesProps) => {
   try {
     const { page, pageSize } = input;
     const skip = (page - 1) * pageSize;
@@ -46,21 +33,10 @@ export const getPaginatedCategories = async ({ ctx, input }: GetCategoriesProps)
       skip,
       take: pageSize,
     });
-    
-
-    const userId = ctx.user.user?.id
-     
-    const userCategories = await db.userCategory.findMany({where: {userId: userId}})
-    let userCategoryMap: UserCategoryType = {}
-    userCategoryMap = userCategories.reduce((map, item) => {
-        map[item.categoryId] = true;
-        return map
-    }, userCategoryMap)
 
     return {
       status: "success",
       currentPage: page,
-      userCategoryMap: userCategoryMap,
       pageSize,
       categories,
     };
@@ -88,6 +64,31 @@ export const getCategoryStats = async () => {
   }
 };
 
+export const getUserCategories = async ({ ctx }: GetUserCategoriesProps) => {
+  try {
+    const userId = ctx.user.user?.id;
+
+    const userCategories = await db.userCategory.findMany({
+      where: { userId: userId },
+    });
+    let userCategoryMap: UserCategoryType = {};
+    userCategoryMap = userCategories.reduce((map, item) => {
+      map[item.categoryId] = true;
+      return map;
+    }, userCategoryMap);
+
+    return {
+      status: "success",
+      userCategoryMap: userCategoryMap,
+    };
+  } catch (err: any) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: err,
+    });
+  }
+};
+
 export const updateUserCategoryHandler = async ({
   ctx,
   input,
@@ -100,31 +101,43 @@ export const updateUserCategoryHandler = async ({
     }
 
     const existingCategories = await db.userCategory.findMany({
-      where: { 
+      where: {
         userId: ctx.user.user?.id,
-        categoryId: { in: [...categoriesToAdd, ...categoriesToDelete] }
+        categoryId: { in: [...categoriesToAdd, ...categoriesToDelete] },
       },
     });
 
-    const categoriesToUpsert = categoriesToAdd.filter((categoryId: string) => 
-      !existingCategories.some(cat => cat.categoryId === categoryId)
+    const categoriesToUpsert = categoriesToAdd.filter(
+      (categoryId: string) =>
+        !existingCategories.some((cat) => cat.categoryId === categoryId),
     );
-    const categoriesToActuallyDelete = existingCategories.filter(cat => 
-      categoriesToDelete.includes(cat.categoryId)
+    const categoriesToActuallyDelete = existingCategories.filter((cat) =>
+      categoriesToDelete.includes(cat.categoryId),
     );
 
-    const addOrUpdateResults = await Promise.all(categoriesToUpsert.map((categoryId: string) =>
-      db.userCategory.upsert({
-        where: { userId_categoryId: { userId: ctx.user.user?.id!, categoryId } },
-        update: {},
-        create: { userId: ctx.user.user?.id!, categoryId },
-      })
-    ));
-    const deleteResults = await Promise.all(categoriesToActuallyDelete.map(cat =>
-      db.userCategory.delete({
-        where: { userId_categoryId: { userId: ctx.user.user?.id!, categoryId: cat.categoryId } }
-      })
-    ));
+    const addOrUpdateResults = await Promise.all(
+      categoriesToUpsert.map((categoryId: string) =>
+        db.userCategory.upsert({
+          where: {
+            userId_categoryId: { userId: ctx.user.user?.id!, categoryId },
+          },
+          update: {},
+          create: { userId: ctx.user.user?.id!, categoryId },
+        }),
+      ),
+    );
+    const deleteResults = await Promise.all(
+      categoriesToActuallyDelete.map((cat) =>
+        db.userCategory.delete({
+          where: {
+            userId_categoryId: {
+              userId: ctx.user.user?.id!,
+              categoryId: cat.categoryId,
+            },
+          },
+        }),
+      ),
+    );
 
     return {
       status: "success",

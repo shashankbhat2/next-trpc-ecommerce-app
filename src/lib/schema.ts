@@ -24,12 +24,6 @@ export const LoginUserSchema = object({
   ),
 });
 
-export const CreateCategoryInputSchema = object({
-  name: string({ required_error: "Name is required" }).min(
-    1,
-    "Name is required",
-  ),
-});
 
 export const PaginationInputSchema = object({
   page: number().min(1),
@@ -56,7 +50,6 @@ export const EmailCodeSchema = object({
 
 export type RegisterUserInputType = TypeOf<typeof RegisterUserSchema>;
 export type LoginUserInputType = TypeOf<typeof LoginUserSchema>;
-export type CategoryInputType = TypeOf<typeof CreateCategoryInputSchema>;
 export type PaginatedCategoryInputType = TypeOf<typeof PaginationInputSchema>;
 export type EmailCodeInputType = TypeOf<typeof EmailCodeSchema>;
 export type UpdateUserCategoryInputType = TypeOf<typeof UpdateUserCategorySchema>

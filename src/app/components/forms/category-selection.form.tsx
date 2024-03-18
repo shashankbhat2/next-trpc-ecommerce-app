@@ -11,6 +11,7 @@ import Pagination from "../ui/pagination";
 const CategorySelectionForm = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [fetchCategoryStats, setFetchCategoryStats] = useState(false);
+  const [fetchUserCategories, setFetchUserCategories] = useState(false);
   const [categoryChanges, setCategoryChanges] = useState<UserCategoryType>({});
   const { data, isLoading } = trpc.getCategories.useQuery({
     page: currentPage,
@@ -21,8 +22,11 @@ const CategorySelectionForm = () => {
       enabled: fetchCategoryStats,
     });
 
+  const { data: userCategoryData, isLoading: isUserCategoryDataLoading } =
+    trpc.getUserCategories.useQuery(undefined, {
+      enabled: fetchUserCategories,
+    });
 
-  
   const totalPages = categoryStats ? categoryStats.totalPages : 0;
   const visiblePageNumbers = totalPages
     ? getPageRange(totalPages, currentPage)
@@ -48,6 +52,7 @@ const CategorySelectionForm = () => {
 
   useEffect(() => {
     setFetchCategoryStats(true);
+    setFetchUserCategories(true);
   }, []);
 
   useEffect(() => {
@@ -67,10 +72,10 @@ const CategorySelectionForm = () => {
   };
 
   const mergedUserCategories = useMemo(() => {
-    if (data) {
-      return { ...data.userCategoryMap, ...categoryChanges };
+    if (userCategoryData) {
+      return { ...userCategoryData.userCategoryMap, ...categoryChanges };
     }
-  }, [data, categoryChanges]);
+  }, [userCategoryData, categoryChanges]);
 
   return (
     <div className="bg-ct-dark-200 mx-auto flex w-full max-w-md flex-col items-center justify-center gap-1 space-y-5 overflow-hidden rounded-xl border p-4">
