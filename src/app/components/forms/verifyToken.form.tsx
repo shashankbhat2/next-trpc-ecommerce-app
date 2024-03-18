@@ -3,7 +3,7 @@ import React, { Suspense, useState } from "react";
 import FormButton from "../ui/form-button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EmailCodeInput, EmailCodeSchema } from "~/lib/schema";
+import { EmailCodeInputType, EmailCodeSchema } from "~/lib/schema";
 import { trpc } from "~/trpc/trpc";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -22,7 +22,7 @@ const VerifyTokenForm = () => {
   const [digits, setDigits] = useState(Array(8).fill(""));
   const [submitting, setSubmitting] = useState(false);
 
-  const methods = useForm<EmailCodeInput>({
+  const methods = useForm<EmailCodeInputType>({
     resolver: zodResolver(EmailCodeSchema),
     mode: "onChange",
   });

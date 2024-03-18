@@ -1,4 +1,4 @@
-import { TypeOf, array, boolean, number, object, record, string } from "zod";
+import { TypeOf, boolean, number, object, record, string } from "zod";
 
 export const RegisterUserSchema = object({
   name: string({ required_error: "Name is required" }).min(
@@ -54,14 +54,11 @@ export const EmailCodeSchema = object({
   ),
 });
 
-export type RegisterUserInput = TypeOf<typeof RegisterUserSchema>;
-export type EmailCodeInput = TypeOf<typeof EmailCodeSchema>;
-export type LoginUserInput = TypeOf<typeof LoginUserSchema>;
+export type RegisterUserInputType = TypeOf<typeof RegisterUserSchema>;
+export type LoginUserInputType = TypeOf<typeof LoginUserSchema>;
 export type CategoryInputType = TypeOf<typeof CreateCategoryInputSchema>;
 export type PaginatedCategoryInputType = TypeOf<typeof PaginationInputSchema>;
 export type EmailCodeInputType = TypeOf<typeof EmailCodeSchema>;
-export type AddToUserCategoriesInputType = TypeOf<
-  typeof AddToUserCategoriesSchema
->;
 export type UpdateUserCategoryInputType = TypeOf<typeof UpdateUserCategorySchema>
 export type UserCategoryType = TypeOf<typeof UpdateUserCategorySchema>
+export type CategoryType = TypeOf<typeof CategorySchema>

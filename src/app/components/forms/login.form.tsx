@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import { toast } from "sonner";
-import { LoginUserInput, LoginUserSchema } from "~/lib/schema";
+import { LoginUserInputType, LoginUserSchema } from "~/lib/schema";
 import { trpc } from "~/trpc/trpc";
 import Link from "next/link";
 import FormInput from "../ui/form-input";
@@ -14,7 +14,7 @@ const LoginForm = () => {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
 
-  const methods = useForm<LoginUserInput>({
+  const methods = useForm<LoginUserInputType>({
     resolver: zodResolver(LoginUserSchema),
   });
 
@@ -38,7 +38,7 @@ const LoginForm = () => {
     },
   });
 
-  const onSubmitHandler: SubmitHandler<LoginUserInput> = (values) => {
+  const onSubmitHandler: SubmitHandler<LoginUserInputType> = (values) => {
     loginHandler(values);
   };
 

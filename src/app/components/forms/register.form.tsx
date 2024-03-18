@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 
 import React, { useState } from 'react'
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
-import { RegisterUserInput, RegisterUserSchema } from '~/lib/schema'
+import { RegisterUserInputType, RegisterUserSchema } from '~/lib/schema'
 import { trpc } from '~/trpc/trpc'
 import Link from 'next/link';
 import FormInput from '../ui/form-input';
@@ -15,7 +15,7 @@ const RegisterForm = () => {
   const router = useRouter() 
   const [submitting, setSubmitting] = useState(false)
 
-  const methods = useForm<RegisterUserInput>({
+  const methods = useForm<RegisterUserInputType>({
     resolver: zodResolver(RegisterUserSchema),
     mode: "onChange"
   })
@@ -42,7 +42,7 @@ const RegisterForm = () => {
   })
 
 
-  const onSubmitHandler: SubmitHandler<RegisterUserInput> = (values) => {
+  const onSubmitHandler: SubmitHandler<RegisterUserInputType> = (values) => {
     registerhandler(values)
   }
 
