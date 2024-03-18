@@ -19,8 +19,9 @@ export function middleware(request: NextRequest) {
     if (request.nextUrl.pathname === "/onboard") {
       return;
     }
-    return Response.redirect(new URL("/onboard", request.url));
   }
+  
+  return Response.redirect(new URL("/login", request.url));
 }
 
 export const config = {
